@@ -2,24 +2,20 @@ part of tui;
 
 class TreeNode {
 
-  int id;
-  String label;
-  int get depth {
-    if (_parent != null) return _parent.depth + 1;
-    return 0;
-  }
-  bool opened = false;
-
   TreeNode _parent;
   List<TreeNode> _children = [];
 
-  TreeNode(this.id, this.label);
+  int get depth => _parent!=null ? _parent.depth + 1 : 0;
+
+  bool opened = false;
+  bool leaf = null;
 
   TreeNode add(TreeNode node) {
     node._parent = this;
     _children.add(node);
     return node;
   }
+
 }
 
 class TreeNodeIterator implements Iterator<TreeNode> {
@@ -54,10 +50,10 @@ class TreeModel extends IterableBase<TreeNode> {
   final _controller = new StreamController<Map>.broadcast();
   Stream<Set> get changes => _controller.stream;
 
-  final root = new TreeNode(0, 'root');
+  final root = new TreeNode();
 
   Iterator<TreeNode> get iterator => new TreeNodeIterator(this);
-  
+
   int indexOf(TreeNode target) {
     int i = 0;
     for (var node in this) {
@@ -76,7 +72,7 @@ class View {
   int width;
 }
 
-class TreeView extends View {
+abstract class TreeView extends View {
 
   int position = 0;
   int cursor = 0;
@@ -120,7 +116,7 @@ class TreeView extends View {
 
   void move_right() {
     var node = _model.skip(cursor).first;
-    if (node._children.isNotEmpty) {
+    if (!node.leaf) {
       node.opened = true;
       move_down();
     }
@@ -132,12 +128,14 @@ class TreeView extends View {
       Terminal.moveCursor(row: row+i, column: col);
       Terminal.eraseLine();
       if (iter.moveNext()) {
-        String line = ' '*iter.current.depth + iter.current.label;
+        String line = render_row(iter.current);
         if (i == (cursor-position)) Terminal.setBackgroundColor(2);
         Terminal.write(line.substring(0, min(line.length, width)));
         if (i == (cursor-position)) Terminal.resetBackgroundColor();
       }
     }
   }
+
+  String render_row(TreeNode node);
 
 }

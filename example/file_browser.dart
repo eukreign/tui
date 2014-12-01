@@ -2,30 +2,73 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:console/console.dart';
 import 'package:tui/tui.dart';
+import 'package:path/path.dart';
+
+class FileNode extends TreeNode {
+  FileNode(this.entity) {
+    filename = basename(entity.path);
+    if (entity is File)
+      leaf = true;
+  }
+
+  String filename;
+  FileSystemEntity entity;
+
+  bool _opened = false;
+  bool get opened => _opened;
+  void set opened(bool value) {
+    if (value && !leaf) {
+      loadChildren();
+      _opened = true;
+    } else {
+      _opened = false;
+    }
+  }
+
+  void loadChildren() {
+    (entity as Directory).listSync().forEach((e) => add(new FileNode(e)));
+  }
+
+}
+
+class FileTree extends TreeModel {
+
+  FileTree() {
+    var path = Platform.environment['HOME'];
+    var dir = new Directory(path);
+    dir.listSync().forEach((e) => root.add(new FileNode(e)));
+  }
+
+}
+
+class FileBrowser extends TreeView {
+
+  FileBrowser(model): super(model);
+
+  String render_row(FileNode node) {
+    return ' '*node.depth + node.filename;
+  }
+
+}
 
 main() {
-  var tree = new TreeModel();
-  tree.root.add(new TreeNode(1, "One")..add(new TreeNode(2, "Two")..add(new TreeNode(3, "Sub Two")))
-           ..add(new TreeNode(4, "Three")));
-  tree.root.add(new TreeNode(5, "Four"));
-  tree.root.add(new TreeNode(6, "Five"));
-  tree.root.add(new TreeNode(7, "Six"));
-  tree.root.add(new TreeNode(8, "Seven"));
-  tree.root.add(new TreeNode(9, "Eight")..add(new TreeNode(10, "Nine")..add(new TreeNode(11, "Sub Nine")))
-           ..add(new TreeNode(12, "Ten")));
+  var tree = new FileTree();
 
   Terminal.init();
   Terminal.eraseDisplay(2);
 
+  /*
   var pos = 0;
   var file = new File('head.txt');
   List<String> text = file.readAsLinesSync();
+  * 
+   */
   
-  var treeView = new TreeView(tree)
+  var treeView = new FileBrowser(tree)
                       ..col = 3
                       ..row = 3
-                      ..height = 4
-                      ..width = 20;
+                      ..height = 10 
+                      ..width = 40;
   treeView.render();
 
   stdin.echoMode = false;
