@@ -1,4 +1,3 @@
-tui
-===
+# Text-based User Interfaces
 
-Text-based User Interface components for building console application.
+TUI is a collection of components for building text-based user interfaces. It is built on top of the low level [console](https://github.com/DirectMyFile/console.dart) library.
