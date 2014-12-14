@@ -76,7 +76,6 @@ main() {
     var size = new Size(80,12);
     var screen = new Screen(size);
     var canvas = screen.canvas();
-    fixed.resize(size);
     fixed.render(canvas);
     print(ANSI.CURSOR_HOME);
     print(screen.toString());

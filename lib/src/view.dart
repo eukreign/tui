@@ -28,12 +28,8 @@ abstract class View extends Object with Sizable, Positionable {
     for (var line in text) {
       render_text(line, canvas);
     }
-    for (var view in children) {
-      view.resize(size);
-    }
-    for (var view in children) {
-      render_child(view, canvas);
-    }
+    resize_children();
+    render_children(canvas);
   }
 
   // 1. Writes the text object to Canvas
@@ -82,6 +78,18 @@ abstract class View extends Object with Sizable, Positionable {
     }
   }
 
+  void resize_children() {
+    for (var view in children) {
+      view.resize(size);
+    }
+  }
+
+  void render_children(Canvas canvas) {
+    for (var view in children) {
+      render_child(view, canvas);
+    }
+  }
+
   // Calls view.update(), figures out sizing for canvas,
   // calls view.render() with new canvas
   void render_child(View view, Canvas canvas) {
@@ -97,10 +105,6 @@ class Box extends View {
 
   String _border;
   Box(this._border);
-
-  void resize(Size size) {
-    // box ignores resize
-  }
 
   void update() {
     text = [];
@@ -120,7 +124,13 @@ class Box extends View {
 }
 
 class Fixed extends View {
+
+  void resize_children() {
+    // does not resize children since everything if absolutely positioned/fixed
+  }
+
   void update() {
 
   }
+
 }
