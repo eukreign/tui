@@ -24,7 +24,7 @@ class TreeNodeIterator implements Iterator<TreeNode> {
   final _queue = new Queue<List>();
 
   TreeNodeIterator(this._model) {
-    _queue.add([_model.root, 0]); 
+    _queue.add([_model.root, 0]);
   }
 
   bool moveNext() {
@@ -65,14 +65,14 @@ class TreeModel extends IterableBase<TreeNode> {
   }
 }
 
-class View {
+class View2 {
   int row;
   int col;
   int height;
   int width;
 }
 
-abstract class TreeView extends View {
+abstract class TreeView extends View2 {
 
   int position = 0;
   int cursor = 0;

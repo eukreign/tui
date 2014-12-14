@@ -1,12 +1,9 @@
 name: 'tui'
 version: 0.0.1
 homepage: https://github.com/damoti/tui
-description: Text-based User Interface components for building console application.
+description: >
+  Text-based User Interface components for building console application.
 author: Lex Berezhny <lex@damoti.com>
-dependencies:
-  console: any
 dev_dependencies:
   path: any
-dependency_overrides:
-  console:
-    path: ../console.dart/
+  unittest: any
