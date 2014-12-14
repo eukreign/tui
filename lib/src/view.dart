@@ -121,6 +121,33 @@ class Box extends View {
     ]);
   }
 
+  void resize_children() {
+    for (var view in children) {
+      var child_size = new Size.from(size);
+      child_size.height -= 2;
+      child_size.width -= 2;
+      view.resize(child_size);
+    }
+  }
+
+  void render_child(View view, Canvas canvas) {
+    view.update();
+      var child_size = new Size.from(size);
+      child_size.height -= 4;
+      child_size.width -= 4;
+      var child_position = new Position(2, 2);
+    view.render(canvas.canvas(child_size, child_position));
+  }
+}
+
+class CenteredText extends View {
+  String content;
+  CenteredText(this.content);
+  void update() {
+    var x = ((width/2)-(content.length/2)).toInt();
+    var y = (height/2).toInt()-1;
+    text = [new Text(content)..position=new Position(x,y)];
+  }
 }
 
 class Fixed extends View {

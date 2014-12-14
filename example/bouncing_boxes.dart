@@ -43,6 +43,9 @@ main() {
   var box5 = new Box("31")..size=new Size(18,8)..position=new Position(4,4);
   fixed.children.addAll([box1, box2, box5]);
 
+  var title = new CenteredText("box 1");
+  box1.children.add(title);
+
   var loop = new RenderLoop();
 
   stdin.echoMode = false;
