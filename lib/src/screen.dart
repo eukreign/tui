@@ -8,22 +8,18 @@ part of tui;
  * lines that have changed from the previous buffer.
  *
  */
-class Screen {
-
-  Size _size;
-  int get width => _size.width;
-  int get height => _size.height;
+class Screen extends Object with Sizable {
 
   List<List<String>> _buffer = [];
   List<List<String>> _previous_buffer = [];
 
   Screen(Size size) {
-    _size = size;
+    this.size = size;
     clear();
   }
 
   void resize(Size size) {
-    _size = size;
+    this.size = size;
     clear();
   }
 
@@ -32,10 +28,10 @@ class Screen {
     _buffer = new List.generate(height, (_)=>new List.filled(width, null));
   }
 
-  Canvas canvas([Size size, Location offset]) {
+  Canvas canvas([Size size, Position offset]) {
     return new Canvas(
-        size!=null?size:new Size.from(this._size),
-        offset!=null?offset:new Location(0,0), this);
+        size!=null?size:new Size.from(this.size),
+        offset!=null?offset:new Position(0,0), this);
   }
 
   String toString() {

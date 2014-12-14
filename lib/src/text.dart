@@ -67,7 +67,7 @@ class TextNodeIterator implements Iterator<String> {
 
 // text can be iterated without formatting, to get the visual length of this
 // text can also be iterated with formatting to actually render it on screen
-class Text extends IterableBase<String> {
+class Text extends IterableBase<String> with Positionable {
 
   bool get isLeaf => _text != null;
   bool get hasChildren => _nodes.isNotEmpty;
@@ -92,19 +92,6 @@ class Text extends IterableBase<String> {
   TextNodeIterator get iterator => new TextNodeIterator(this);
 
   Text([this._text]);
-
-  String render() {
-    if (text != null) return text;
-    var buf = new StringBuffer();
-    var iter = iterator;
-    while (iter.moveNext()) {
-      buf.write(iter.stack);
-    }
-
-    //for (var node)
-    //else
-    //  return this.map((n)=>n.text!=null?n.text:"").join();
-  }
 
   void apply(Text text) {
     bold = text.bold;

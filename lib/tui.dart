@@ -25,11 +25,23 @@ class Size {
   }
 }
 
-class Location {
+abstract class Sizable {
+  Size size;
+  int get width => size.width;
+  int get height => size.height;
+}
+
+class Position {
   int x, y;
-  Location(this.x, this.y);
-  Location.from(Location location) {
-    x = location.x;
-    y = location.y;
+  Position(this.x, this.y);
+  Position.from(Position position) {
+    x = position.x;
+    y = position.y;
   }
+}
+
+class Positionable {
+  Position position = new Position(0,0);
+  int get x => position.x;
+  int get y => position.y;
 }

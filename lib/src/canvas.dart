@@ -13,26 +13,17 @@ part of tui;
  * canvas width/height boundary.
  *
  */
-class Canvas {
-
-  Size _size;
-  int get width => _size.width;
-  int get height => _size.height;
-
-  // Location of this canvas relative to the Screen
-  Location _offset;
-  int get x => _offset.x;
-  int get y => _offset.y;
+class Canvas extends Object with Sizable, Positionable {
 
   Screen _screen;
 
-  Canvas(Size size, Location offset, this._screen) {
-    this._size = size;
-    this._offset = offset;
+  Canvas(Size size, Position offset, this._screen) {
+    this.size = size;
+    this.position = offset;
   }
 
   // Create a new canvas offset from this one.
-  Canvas canvas(Size size, Location offset) {
+  Canvas canvas(Size size, Position offset) {
     offset.x += x;
     offset.y += y;
     return new Canvas(size, offset, _screen);
@@ -40,14 +31,14 @@ class Canvas {
 
   // Returns true if there is already something written at this point.
   bool occluded(int x, int y) =>
-    _screen.occluded(_offset.x+x, _offset.y+y);
+    _screen.occluded(position.x+x, position.y+y);
 
   // Writes to a point on the canvas.
   void write(int x, int y, String char) =>
-    _screen.write(_offset.x+x, _offset.y+y, char);
+    _screen.write(position.x+x, position.y+y, char);
 
   // Returns value at this point.
   String stringAt(int x, int y) =>
-    _screen.stringAt(_offset.x+x, _offset.y+y);
+    _screen.stringAt(position.x+x, position.y+y);
 
 }

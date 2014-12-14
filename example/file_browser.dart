@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:console/console.dart';
 import 'package:tui/tui.dart';
 import 'package:path/path.dart';
 
@@ -54,20 +53,19 @@ class FileBrowser extends TreeView {
 main() {
   var tree = new FileTree();
 
-  Terminal.init();
-  Terminal.eraseDisplay(2);
+  print(ANSI.ERASE_SCREEN);
 
   /*
   var pos = 0;
   var file = new File('head.txt');
   List<String> text = file.readAsLinesSync();
-  * 
+  *
    */
-  
+
   var treeView = new FileBrowser(tree)
                       ..col = 3
                       ..row = 3
-                      ..height = 10 
+                      ..height = 10
                       ..width = 40;
   treeView.render();
 
@@ -88,7 +86,6 @@ main() {
         treeView.move_right();
         break;
       case "q":
-        Terminal.moveToColumn(1);
         stdin.echoMode = true;
         stdin.lineMode = true;
         exit(0);
