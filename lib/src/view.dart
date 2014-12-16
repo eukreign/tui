@@ -7,10 +7,27 @@ abstract class View extends Object with Sizable, Positionable {
   List<Text> text = [];
   List<View> children = [];
 
-  // Called before render() to give the view
-  // an opportunity to make any changes to text
-  // before being rendered
-  void update();
+  // The update() method is called by resize() or from your
+  // own code when something about the data this view represents
+  // changes. Common thing is to use this in callbacks for async
+  // events that modify data
+  //
+  //  async_op().then((data) { view.data = data; view.update() }
+  //
+  // If update() is of any complexity and you have multiples async calls then
+  // reduce the number of calls to update() by waiting for all operations to finish,
+  // on the other hand if the async operations will take a long time and you want
+  // the screen to update with at least partial results, then go ahead and call update()
+  // with each async completion.
+  //
+  // var async1 = async_op();
+  // var async2 = async_op2();
+  // new Future.wait([async1,async2]).then(update);
+  //
+  void update() {
+    // called when resize happens or new data is available for this view
+    // update text objects
+  }
 
   // passed in Size with available size
   // the View should save the size
@@ -20,16 +37,27 @@ abstract class View extends Object with Sizable, Positionable {
   // it is okay to modify the size during this function call,
   // the parent will check for changes in size (making it smaller)
   // to adjust other children or do something else
-  void resize(Size size) {
+
+  // called when:
+  // 1. app is initially loaded
+  // 2. this view is added to another view
+  // 3. the parent view changes size
+  void resize(Size size, Position position) {
     this.size = size;
+    this.position = position;
+    resize_children();
+    update();
   }
 
   void render(Canvas canvas) {
+    render_texts(canvas);
+    render_children(canvas);
+  }
+
+  void render_texts(Canvas canvas) {
     for (var line in text) {
       render_text(line, canvas);
     }
-    resize_children();
-    render_children(canvas);
   }
 
   // 1. Writes the text object to Canvas
@@ -78,9 +106,11 @@ abstract class View extends Object with Sizable, Positionable {
     }
   }
 
+  // default implementation just calls each child
+  // with it's existing size/position to trigger the initial update
   void resize_children() {
     for (var view in children) {
-      view.resize(size);
+      view.resize(view.size, view.position);
     }
   }
 
@@ -90,11 +120,9 @@ abstract class View extends Object with Sizable, Positionable {
     }
   }
 
-  // Calls view.update(), figures out sizing for canvas,
   // calls view.render() with new canvas
   void render_child(View view, Canvas canvas) {
-    view.update();
-    view.render(canvas.canvas(size, view.position));
+    view.render(canvas.canvas(view.size, view.position));
   }
 
 }
@@ -103,41 +131,36 @@ abstract class View extends Object with Sizable, Positionable {
 
 class Box extends View {
 
-  String _border;
-  Box(this._border);
+  String border;
+  String color;
+
+  Box(this.border, this.color);
 
   void update() {
     text = [];
     text.addAll([
-    new Text(_border.substring(0,1) * width)..color = _border,
-    new Text(_border.substring(0,1) * width)..color = _border..position = new Position(0, 1)]);
+    new Text(border*width)..color = color,
+    new Text(border*width)..color = color..position = new Position(0, 1)]);
     for (int i = 1; i < height-1; i++) {
-      text.add(new Text(_border.substring(0,1) * 2)..color = _border..position = new Position(0, i));
-      text.add(new Text(_border.substring(0,1) * 2)..color = _border..position = new Position(width-2, i));
+      text.add(new Text(border*2)..color = color..position = new Position(0, i));
+      text.add(new Text(border*2)..color = color..position = new Position(width-2, i));
     }
     text.addAll([
-    new Text(_border.substring(0,1) * width)..color = _border..position = new Position(0, height-1),
-    new Text(_border.substring(0,1) * width)..color = _border..position = new Position(0, height-2),
+    new Text(border*width)..color = color..position = new Position(0, height-1),
+    new Text(border*width)..color = color..position = new Position(0, height-2),
     ]);
   }
 
   void resize_children() {
     for (var view in children) {
       var child_size = new Size.from(size);
-      child_size.height -= 2;
-      child_size.width -= 2;
-      view.resize(child_size);
-    }
-  }
-
-  void render_child(View view, Canvas canvas) {
-    view.update();
-      var child_size = new Size.from(size);
       child_size.height -= 4;
       child_size.width -= 4;
       var child_position = new Position(2, 2);
-    view.render(canvas.canvas(child_size, child_position));
+      view.resize(child_size, child_position);
+    }
   }
+
 }
 
 class CenteredText extends View {
@@ -148,16 +171,4 @@ class CenteredText extends View {
     var y = (height/2).toInt()-1;
     text = [new Text(content)..position=new Position(x,y)];
   }
-}
-
-class Fixed extends View {
-
-  void resize_children() {
-    // does not resize children since everything if absolutely positioned/fixed
-  }
-
-  void update() {
-
-  }
-
 }

@@ -12,9 +12,11 @@ part 'src/canvas.dart';
 part 'src/text.dart';
 part 'src/view.dart';
 
-part 'src/tree.dart';
-part 'src/window.dart';
 part 'src/escape.dart';
+part 'src/window.dart';
+part 'src/render_loop.dart';
+
+part 'src/tree.dart';
 
 class Size {
   int width, height;
