@@ -1,3 +1,19 @@
-make some videos showing the demos:
+1. bouncing boxes example
 
+2. file reader
+
+3. top
+
+4. file browser (incorporates file read)
+
+5. Implement paint program,  saves as dart file that can then render in view
+      Press on keyboard to select key to paint
+      Left click to select font color
+      Right click font background
+
+6. postgresql admin tool, possibly make it a separate project 
+
+7. laser!!!
+
+make some videos showing the demos:
 http://askubuntu.com/questions/107726/how-to-create-animated-gif-images-of-a-screencast
